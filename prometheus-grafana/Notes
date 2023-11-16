@@ -1,6 +1,6 @@
 # How to Setup Prometheus Monitoring On Kubernetes Cluster
 
-# we will create a Kubernetes namespace for all our monitoring components
+we will create a Kubernetes namespace for all our monitoring components
 
 kubectl create namespace monitoring
 
@@ -50,5 +50,51 @@ Step 3: Once created, you can access the Prometheus dashboard using any of the K
 
 
 
+# Kube State Metrics
 
+
+Primarily it produces metrics in Prometheus format with the stability as the Kubernetes API. Overall it provides kubernetes objects & resources metrics that you cannot get directly from native Kubernetes monitoring components.
+
+Kube state metrics service exposes all the metrics on /metrics URI. Prometheus can scrape all the metrics exposed by Kube state metrics.
+
+Following are some of the important metrics you can get from Kube state metrics.
+
+Node status, node capacity (CPU and memory)
+Replica-set compliance (desired/available/unavailable/updated status of replicas per deployment)
+Pod status (waiting, running, ready, etc)
+Ingress metrics
+PV, PVC metrics
+Daemonset & Statefulset metrics.
+Resource requests and limits.
+Job & Cronjob metrics
+
+Kube state metrics is available as a public docker image. You will have to deploy the following Kubernetes objects for Kube state metrics to work.
+
+1) Service Account
+2) Cluster Role – For kube state metrics to access all the Kubernetes API objects.
+3) Cluster Role Binding – Binds the service account with the cluster role.
+4) Kube State Metrics Deployment
+5) Service – To expose the metrics
+
+All the above Kube state metrics objects will be deployed in the kube-system namespace
+
+Step 1: Clone the Github repo
+
+git clone https://github.com/devopscube/kube-state-metrics-configs.git
+Step 2: Create all the objects by pointing to the cloned directory.
+
+kubectl apply -f kube-state-metrics-configs/
+Step 3: Check the deployment status using the following command.
+
+kubectl get deployments kube-state-metrics -n kube-system
+
+All the Kube static metrics can be obtained from the Kube state service endpoint on /metrics URI.
+
+This configuration can be added as part of the Prometheus job configuration. You need to add the following job configuration to your Prometheus config for Prometheus to scrape all the Kube state metrics.
+
+- job_name: 'kube-state-metrics'
+  static_configs:
+    - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
+
+# Grafana
 
