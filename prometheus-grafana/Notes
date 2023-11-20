@@ -98,3 +98,30 @@ This configuration can be added as part of the Prometheus job configuration. You
 
 # Grafana
 
+Deploy Grafana On Kubernetes
+Let’s look at the Grafana setup in detail.
+
+Step 1: Create a file named grafana-datasource-config.yaml
+vi grafana-datasource-config.yaml
+
+Step 2: Create the configmap using the following command.
+kubectl create -f grafana-datasource-config.yaml
+
+Step 3: Create a file named deployment.yaml
+vi deployment.yaml
+
+Note: This Grafana deployment does not use a persistent volume. If you restart the pod all changes will be gone. Use a persistent volume if you are deploying Grafana for your project requirements. It will persist all the configs and data that Grafana uses.
+
+Step 4: Create the deployment
+kubectl create -f deployment.yaml
+
+Step 5: Create a service file named service.yaml
+vi service.yaml
+
+Step 6: Create the service.
+
+kubectl create -f service.yaml
+Now you should be able to access the Grafana dashboard using any node IP on port 32000. Make sure the port is allowed in the firewall to be accessed from your workstation.
+
+http://<your-node-ip>:32000
+
