@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: hellowworld-gateway-1
+  namespace: hello-world-ui
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+    - port:
+        number: 443
+        name: HTTP
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE # enables HTTPS on this port
+        serverCertificate: /etc/certs/servercert.pem
+        privateKey: /etc/certs/privatekey.pem
+      hosts:
+        - "helloworld.example.com"
+
+        

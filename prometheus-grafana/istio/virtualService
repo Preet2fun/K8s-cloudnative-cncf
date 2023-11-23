@@ -1,0 +1,28 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: hellow-world-virtualservice
+  namespace: hello-world-ui
+spec:
+  hosts:
+    - "helloworld.example.com"
+  gateways:
+    - helloworld-gateway-1
+  http:
+  - name: "ProductPage-v1-routes"
+    - match:
+        - uri:
+            exact: /productpage
+        - uri:
+            prefix: /api/v1/products
+        rewrite:
+          uri: "/newcatalog"
+        route:
+        - destination:
+            host: productpage
+            subset: v1
+  - name: "ProductPage-v2-routes"
+      route:
+      - destination:
+          host: productpage
+          subset: v2
